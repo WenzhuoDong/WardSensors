@@ -1,17 +1,31 @@
 package org.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import HES.Systems.EnvironmentalSystem;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        EnvironmentalSystem env = new EnvironmentalSystem();
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        for (int i = 0; i < 10; i++) {
+            float north = env.getTempFeed().getTemperature(0);
+            float central = env.getTempFeed().getTemperature(1);
+            float south = env.getTempFeed().getTemperature(2);
+            int inside = env.getHumidityFeed().getInsideHumidity();
+            int outside = env.getHumidityFeed().getOutsideHumidity();
+            float pollution = env.getPollutionFeed().getPollution();
+
+            System.out.println("Second " + i
+                    + " | N=" + north + " C=" + central + " S=" + south
+                    + " | humidity in=" + inside + " out=" + outside
+                    + " | PM2.5=" + pollution);
+
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+            }
         }
+
+        System.out.println(env.getCTScannerStatus());
+        System.out.println(env.getUltrasoundScannerStatus());
     }
 }
