@@ -1,31 +1,34 @@
 package org.example;
 
-import HES.Systems.EnvironmentalSystem;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Main {
+    private static int seconds = 0;
+
     public static void main(String[] args) {
-        EnvironmentalSystem env = new EnvironmentalSystem();
+        EnvironmentMonitor monitor = new EnvironmentMonitor();
+        SensorDisplay display = new SensorDisplay(monitor);
 
-        for (int i = 0; i < 10; i++) {
-            float north = env.getTempFeed().getTemperature(0);
-            float central = env.getTempFeed().getTemperature(1);
-            float south = env.getTempFeed().getTemperature(2);
-            int inside = env.getHumidityFeed().getInsideHumidity();
-            int outside = env.getHumidityFeed().getOutsideHumidity();
-            float pollution = env.getPollutionFeed().getPollution();
+        JFrame frame = new JFrame("Children's Wing Environment Monitor");
+        frame.add(display);
+        frame.setSize(800, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
-            System.out.println("Second " + i
-                    + " | N=" + north + " C=" + central + " S=" + south
-                    + " | humidity in=" + inside + " out=" + outside
-                    + " | PM2.5=" + pollution);
-
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                monitor.updateAll();          // read sensors and control devices
+                display.refresh();            // update the grid
+                seconds++;
+                if (seconds % 30 == 0) {      // every 30 seconds
+                    monitor.printLog();
+                }
+                frame.repaint();
             }
-        }
-
-        System.out.println(env.getCTScannerStatus());
-        System.out.println(env.getUltrasoundScannerStatus());
+        });
+        timer.start();
     }
 }
